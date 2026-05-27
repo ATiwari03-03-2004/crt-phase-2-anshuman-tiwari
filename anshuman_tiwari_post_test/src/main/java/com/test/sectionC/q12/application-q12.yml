@@ -1,0 +1,16 @@
+# Q12 - application.yml for registering product-service with Eureka
+spring:
+  application:
+    name: product-service        # the name the service registers under in Eureka
+
+server:
+  port: 8081
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka   # location of the Eureka server
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true

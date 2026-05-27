@@ -1,0 +1,26 @@
+Q8 - The N+1 Query Problem in JPA
+=================================
+
+In my own words:
+The N+1 problem happens when you run ONE query to fetch a list of N parent rows,
+and then JPA silently runs ONE more query for EACH parent to load its lazy
+association. So instead of 1 query you get 1 + N queries, which hammers the
+database as N grows.
+
+Simple example:
+    List<Author> authors = authorRepo.findAll();      // 1 query (loads N authors)
+    for (Author a : authors) {
+        System.out.println(a.getBooks().size());       // 1 query PER author = N more
+    }
+    // Total = 1 + N queries.
+
+Most common cause:
+    Accessing a LAZY-loaded association (e.g. @OneToMany / @ManyToOne with
+    FetchType.LAZY) inside a loop, so each access fires its own SELECT.
+
+One-line fix using JOIN FETCH in a @Query method:
+    @Query("SELECT a FROM Author a JOIN FETCH a.books")
+    List<Author> findAllWithBooks();
+
+JOIN FETCH loads the authors AND their books in a single query, eliminating the
+extra N round-trips.

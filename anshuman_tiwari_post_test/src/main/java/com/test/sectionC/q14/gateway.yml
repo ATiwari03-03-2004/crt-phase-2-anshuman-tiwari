@@ -1,0 +1,29 @@
+# Q14 - Spring Cloud Gateway
+#
+# WHAT IS AN API GATEWAY:
+#   A single entry point that sits in front of all microservices and forwards
+#   each incoming request to the correct backend service.
+#
+# 2 BENEFITS:
+#   1. Single entry point - clients use one URL/host instead of knowing every
+#      service's address; routing is handled centrally.
+#   2. Cross-cutting concerns in one place - authentication, rate limiting,
+#      logging, CORS and load balancing are applied once at the gateway.
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: order-service
+          uri: lb://order-service        # lb:// = load-balanced via service discovery
+          predicates:
+            - Path=/api/orders/**
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/users/**
+
+server:
+  port: 8080

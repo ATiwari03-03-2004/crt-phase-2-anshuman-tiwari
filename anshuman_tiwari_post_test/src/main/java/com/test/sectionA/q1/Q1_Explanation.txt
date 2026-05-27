@@ -1,0 +1,15 @@
+Q1 - Predicted Console Output
+=============================
+
+Output (in order):
+1. Constructor called
+2. Init called
+
+One-line reason for each:
+- "Constructor called" -> Spring creates the bean instance first; the constructor
+  always runs at object creation, before anything else.
+- "Init called"        -> @PostConstruct runs AFTER the constructor and AFTER all
+  dependency injection is complete, as part of bean initialization.
+
+Full lifecycle order:
+  Constructor  ->  Dependency Injection (@Autowired)  ->  @PostConstruct (init)

@@ -1,0 +1,24 @@
+# Q20 - docker-compose with a Postgres db and the Spring Boot app
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: appdb
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: appsecret
+    ports:
+      - "5432:5432"
+
+  app:
+    image: myapp:latest
+    ports:
+      - "8080:8080"
+    environment:
+      # connect to the "db" service by its service name (Docker network DNS)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/appdb
+      SPRING_DATASOURCE_USERNAME: appuser
+      SPRING_DATASOURCE_PASSWORD: appsecret
+    depends_on:
+      - db        # start "app" only after "db" has started

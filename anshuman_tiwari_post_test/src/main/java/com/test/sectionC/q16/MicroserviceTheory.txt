@@ -1,0 +1,28 @@
+Q16 - Splitting a Monolith (UserModule, OrderModule, ProductModule)
+===================================================================
+
+(a) 3 BENEFITS of splitting into microservices:
+    1. Independent deployment & scaling - each service can be deployed and scaled
+       on its own (e.g. scale ProductService during a sale without touching others).
+    2. Technology/team independence - each service can use its own stack and be
+       owned by a separate team, enabling parallel development.
+    3. Fault isolation - a crash in OrderService doesn't bring down Users or
+       Products; failures are contained.
+
+(b) 2 CHALLENGES:
+    1. Distributed system complexity - network calls, latency, partial failures,
+       and the need for resilience patterns (retries, circuit breakers).
+    2. Data consistency - each service has its own database, so maintaining
+       consistency across services requires extra effort (events, sagas) instead
+       of a single ACID transaction. (Also: harder testing/monitoring.)
+
+(c) How Eureka and an API Gateway work together for a React frontend:
+    - Each microservice (user, order, product) registers itself with EUREKA
+      (the service registry) on startup, publishing its name and live location.
+    - The API GATEWAY is the single public URL the React app talks to. When a
+      request comes in (e.g. /api/orders/...), the gateway looks the target
+      service up in Eureka (using lb://order-service), picks a healthy instance,
+      load-balances, and forwards the request.
+    - Result: the React frontend only needs ONE base URL (the gateway). It never
+      needs to know how many service instances exist or where they live - Eureka +
+      Gateway handle discovery, routing, and load balancing behind the scenes.

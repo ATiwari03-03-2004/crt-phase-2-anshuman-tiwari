@@ -1,0 +1,33 @@
+Q18 - @Mock (Mockito) vs @MockBean (Spring Boot Test)
+=====================================================
+
+@Mock (Mockito):
+  - Creates a plain mock object. It is NOT part of any Spring context.
+  - Used in pure UNIT tests where you build the object under test yourself
+    (usually with @InjectMocks) and no Spring container is started.
+  - Faster, no Spring overhead.
+
+@MockBean (Spring Boot Test):
+  - Creates a Mockito mock AND places it into the Spring ApplicationContext,
+    REPLACING any real bean of that type.
+  - Used in INTEGRATION / slice tests (@SpringBootTest, @WebMvcTest) where Spring
+    is running and you want autowired components to receive the mock.
+
+When to use each:
+  - @Mock      -> isolated unit test, no Spring context needed.
+  - @MockBean  -> Spring-based test where the mock must be injected into the
+                  application context (e.g. mocking a service used by a controller).
+
+Example using @MockBean with @SpringBootTest:
+
+    @SpringBootTest
+    class OrderControllerTest {
+
+        @MockBean
+        private OrderService orderService;   // replaces the real bean in the context
+
+        @Autowired
+        private OrderController orderController;
+
+        // ... tests that stub orderService and call orderController ...
+    }

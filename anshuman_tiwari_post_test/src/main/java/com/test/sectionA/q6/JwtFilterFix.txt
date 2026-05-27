@@ -1,0 +1,17 @@
+Q6 - JWT Filter
+===============
+
+(a) What the filter does (2 lines):
+    It intercepts every request once, reads the "Authorization: Bearer <token>"
+    header, extracts the username from the JWT and - if present - stores an
+    Authentication in the SecurityContext so Spring Security treats the caller
+    as logged in for the rest of the request.
+
+(b) The bug:
+    BUGGY  : String token = header.substring(6);
+    "Bearer " has 7 characters (6 letters + 1 space). substring(6) starts copying
+    at the space, leaving " eyJhbG..." with a leading space -> the token never
+    parses correctly, so it is always invalid.
+
+    CORRECTED LINE:
+        String token = header.substring(7);
